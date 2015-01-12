@@ -25,29 +25,20 @@ import simplejson
 import util
 
 
-def GetFromGoogleLocAPI():
-  """Use the Google Loc JSON API from Google Gears.
-
-  Returns:
-    A dictionary containing geolocation information
-
-  NOTE: This is in violation of the Gears Terms of Service. See:
-  http://code.google.com/p/gears/wiki/GeolocationAPI
-  """
+def GetFromIpInfoIO():
   h = httplib2.Http(tempfile.gettempdir(), timeout=10)
-  url = 'http://www.google.com/loc/json'
-  post_data = {'request_address': 'true', 'version': '1.1.0', 'source': 'namebench'}
-  unused_resp, content = h.request(url, 'POST', simplejson.dumps(post_data))
+  url = 'http://ipinfo.io/json'
   try:
-    data = simplejson.loads(content)['location']
+    unused_resp, content = h.request(url, 'GET')
+    data = simplejson.loads(content)
     return {
-        'region_name': data['address'].get('region'),
-        'country_name': data['address'].get('country'),
-        'country_code': data['address'].get('country_code'),
-        'city': data['address'].get('city'),
-        'latitude': data['latitude'],
-        'longitude': data['longitude'],
-        'source': 'gloc'
+          'region_name': data['region'],
+          'country_name': data['country'],
+          'country_code': data['country'],
+          'city': data['city'],
+          'latitude': data['loc'].split(',')[0],
+          'longitude': data['loc'].split(',')[1],
+          'source': 'ipinfo'
     }
   except:
     print '* Failed to use GoogleLocAPI: %s (content: %s)' % (util.GetLastExceptionString(), content)
@@ -69,7 +60,7 @@ def GetFromMaxmindJSAPI():
 def GetGeoData():
   """Get geodata from any means necessary. Sanitize as necessary."""
   try:
-    json_data = GetFromGoogleLocAPI()
+    json_data = GetFromIpInfoIO()
     if not json_data:
       json_data = GetFromMaxmindJSAPI()
 
