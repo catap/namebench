@@ -21,6 +21,7 @@ __author__ = 'tstromberg@google.com (Thomas Stromberg)'
 import os
 import platform
 import sys
+import signal
 
 # Check before we start importing internal dependencies
 if sys.version < '2.4':
@@ -33,7 +34,11 @@ elif sys.version >= '3.0':
 from libnamebench import cli
 from libnamebench import config
 
+def signal_handler(signal, frame):
+  os._exit(1)
+
 if __name__ == '__main__':
+  signal.signal(signal.SIGINT, signal_handler)
   options = config.GetMergedConfiguration()
   use_tk = False
 
