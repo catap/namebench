@@ -22,7 +22,7 @@ import os.path
 import sys
 import time
 import tempfile
-
+import random
 
 def CalculateListAverage(values):
   """Computes the arithmetic mean of a list of numbers."""
@@ -152,7 +152,7 @@ def DoesClockGoBackwards():
 
 def GetMostAccurateTimerFunction():
   """Pick the most accurate timer for a platform."""
-  if sys.platform[:3] == 'win' and not _DoesClockGoBackwards():
+  if sys.platform[:3] == 'win' and not DoesClockGoBackwards():
     return time.clock
   else:
     return time.time
