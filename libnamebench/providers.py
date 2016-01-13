@@ -19,6 +19,7 @@ __author__ = 'tstromberg@google.com (Thomas Stromberg)'
 import re
 import socket
 import sys
+import tempfile
 
 if __name__ == '__main__':
   sys.path.append('..')
@@ -29,6 +30,8 @@ import util
 import nameserver
 import sys_nameservers
 
+import httplib2
+
 OPENDNS_IP = '208.67.220.220'
 GOOGLE_IP = '8.8.8.8'
 MY_RESOLVER_HOST = 'ns2.myresolver.info.'
@@ -37,6 +40,11 @@ ULTRADNS_AUTH_IP = '204.69.234.1'
 
 def GetExternalIp():
   """Helper method to get external IP from anyone who cares."""
+  h = httplib2.Http(tempfile.gettempdir(), timeout=10)
+  url = 'http://whatismyip.akamai.com'
+  resp, content = h.request(url, 'GET')
+  if resp.status == 200:
+    return content
   for provider in (UltraDNSAuth(), MyResolverInfo()):
     answer = provider.GetClientIp()
     if answer:
