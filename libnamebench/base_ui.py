@@ -239,7 +239,7 @@ class BaseUI(object):
       self.report_path = util.GenerateOutputFilename(self.options.template)
 
     if self.options.csv_file:
-      self.csv_path = self.options_csv_file
+      self.csv_path = self.options.csv_file
     else:
       self.csv_path = util.GenerateOutputFilename('csv')
 
